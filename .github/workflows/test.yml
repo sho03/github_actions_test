@@ -2,10 +2,11 @@ name: test
 
 on:
   workflow_dispatch:
-    branches: main
 
-jobs: 
-  build:
+jobs:
+  printLog:
     runs-on: ubuntu-latest
+
     steps:
-      - run: 'echo "test workflow" '
+    - name: print log
+      run: echo "Hello!"
