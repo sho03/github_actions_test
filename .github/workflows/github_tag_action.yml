@@ -18,6 +18,7 @@ jobs:
         run: |
           TAGS=$(git tag -l)
           echo "TAGS: $TAGS"
+          git --version
 
       - name: Bump version and push tag
         id: tag_version
