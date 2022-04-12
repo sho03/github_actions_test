@@ -9,17 +9,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-
       - name: Get commit summary
         id: get_commit_summary
         run: |
-          TAGS=$(git tag -l)
-          echo "TAGS: $TAGS"
-          git --version
-          git tag -l
+          PREVIOUS_TAG=$(git tag --sort=-creatordate | sed -n 2p)
+          echo "PREVIOUS_TAG: $PREVIOUS_TAG"
+          COMMIT_SUMMARY="$(git log --oneline --pretty=tformat:"%h %s" $PREVIOUS_TAG..${{ github.ref }})"
+          PR_NUMBERS="$(echo $COMMIT_SUMMARY | grep 'Merge' | awk '{print $5}')"
+          echo ::set-output name=PR_NUMBERS::$PR_NUMBERS
 
       - name: Bump version and push tag
         id: tag_version
@@ -32,4 +29,4 @@ jobs:
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.get_commit_summary.outputs.COMMIT_SUMMARY }}
+          body: ${{ steps.get_commit_summary.outputs.PR_NUMBERS}}
