@@ -19,6 +19,7 @@ jobs:
           TAGS=$(git tag -l)
           echo "TAGS: $TAGS"
           git --version
+          git tag -l
 
       - name: Bump version and push tag
         id: tag_version
