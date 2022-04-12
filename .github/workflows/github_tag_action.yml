@@ -8,18 +8,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Print tags
+      - name: Get commit summary
+        id: get_commit_summary
         run: |
           PREVIOUS_TAG=$(git tag --sort=-creatordate | sed -n 2p)
           echo "PREVIOUS_TAG: $PREVIOUS_TAG"
+          COMMIT_SUMMARY="$(git log --oneline --pretty=tformat:"%h %s" $PREVIOUS_TAG..${{ github.ref }})"
+          COMMIT_SUMMARY="${COMMIT_SUMMARY//$'\n'/'%0A'}"
+          echo ::set-output name=COMMIT_SUMMARY::$COMMIT_SUMMARY
+
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
+          body: ${{ steps.get_commit_summary.outputs.COMMIT_SUMMARY }}
