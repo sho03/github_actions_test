@@ -5,28 +5,36 @@ on:
       - main
 jobs:
   build:
+    name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
       - name: Get commit summary
         id: get_commit_summary
         run: |
-          PREVIOUS_TAG="$(git tag --sort=-creatordate | sed -n 2p)"
+          PREVIOUS_TAG=$(git tag --sort=-creatordate | sed -n 2p)
           echo "PREVIOUS_TAG: $PREVIOUS_TAG"
           COMMIT_SUMMARY="$(git log --oneline --pretty=tformat:"%h %s" $PREVIOUS_TAG..${{ github.ref }})"
-          PR_NUMBERS="$(echo $COMMIT_SUMMARY | grep 'Merge' | awk '{print $5}')"
-          echo ::set-output name=PR_NUMBERS::$PR_NUMBERS
+          COMMIT_SUMMARY="${COMMIT_SUMMARY//$'\n'/'%0A'}"
+          echo ::set-output name=COMMIT_SUMMARY::$COMMIT_SUMMARY
 
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.0
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.get_commit_summary.outputs.PR_NUMBERS}}
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ${{ steps.get_commit_summary.outputs.COMMIT_SUMMARY }}
+          draft: false
+          prerelease: false
