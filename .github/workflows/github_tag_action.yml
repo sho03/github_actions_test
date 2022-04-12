@@ -8,6 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Print merged pull request numbers
+        run: |
+          git log --pretty=oneline v0.0.1...v1.1.2 | grep 'Merge pull request' | awk '{print $5}'
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v6.0
