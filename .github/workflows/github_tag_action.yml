@@ -16,8 +16,6 @@ jobs:
           COMMIT_SUMMARY="$(git log --oneline --pretty=tformat:"%h %s" $PREVIOUS_TAG..${{ github.ref }})"
           COMMIT_SUMMARY="${COMMIT_SUMMARY//$'\n'/'%0A'}"
           echo ::set-output name=COMMIT_SUMMARY::$COMMIT_SUMMARY
-          HOGE=hoge
-          echo $HOGE
 
       - name: Bump version and push tag
         id: tag_version
