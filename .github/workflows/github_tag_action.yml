@@ -12,7 +12,7 @@ jobs:
       - name: Get commit summary
         id: get_commit_summary
         run: |
-          PREVIOUS_TAG=$(git tag --sort=-creatordate | sed -n 2p)
+          PREVIOUS_TAG="$(git tag --sort=-creatordate | sed -n 2p)"
           echo "PREVIOUS_TAG: $PREVIOUS_TAG"
           COMMIT_SUMMARY="$(git log --oneline --pretty=tformat:"%h %s" $PREVIOUS_TAG..${{ github.ref }})"
           PR_NUMBERS="$(echo $COMMIT_SUMMARY | grep 'Merge' | awk '{print $5}')"
