@@ -27,7 +27,7 @@ jobs:
           echo ::set-output name=COMMIT_SUMMARY::$COMMIT_SUMMARY
 
       - name: gh test
-        run: gh pr list
+        run: gh pr list | cat | echo
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
