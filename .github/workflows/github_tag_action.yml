@@ -23,7 +23,7 @@ jobs:
           PREVIOUS_TAG=$(git tag --sort=-creatordate | sed -n 2p)
           echo "PREVIOUS_TAG: $PREVIOUS_TAG"
           COMMIT_SUMMARY="$(git log --oneline --pretty=tformat:"%h %s" $PREVIOUS_TAG..${{ github.ref }} | grep 'Merge' | awk '{print $5}') "
-          echo $COMMIT_SUMMARY
+          echo "COMMIT_SUMMARY: $COMMIT_SUMMARY"
           COMMIT_SUMMARY="${COMMIT_SUMMARY//$'\n'/'%0A'}"
           echo ::set-output name=COMMIT_SUMMARY::$COMMIT_SUMMARY
 
