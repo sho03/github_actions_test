@@ -33,6 +33,7 @@ jobs:
         run: |
           LIST=$(gh pr list -s closed)
           echo $LIST
+          echo ::set-output name=PR_LIST::$LIST
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,4 +47,5 @@ jobs:
         with:
           tag: ${{ steps.tag_version.outputs.new_tag }}
           name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.get_commit_summary.outputs.COMMIT_SUMMARY}}
+          # body: ${{ steps.get_commit_summary.outputs.COMMIT_SUMMARY}}
+          body: ${{ steps.gh_command.outputs.PR_LIST }}
