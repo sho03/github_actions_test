@@ -29,7 +29,7 @@ jobs:
       - name: gh test
         id: gh_command
         run: |
-          LIST=$(gh pr list)
+          LIST=$(gh pr list -s closed)
           echo $LIST
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
