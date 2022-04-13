@@ -28,6 +28,8 @@ jobs:
 
       - name: gh test
         run: gh pr list
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump version and push tag
         id: tag_version
